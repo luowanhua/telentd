@@ -1,0 +1,27 @@
+include $(TOPDIR)/rules.mk
+PKG_NAME:=telnetd
+PKG_RELEASE:=1
+PKG_BUILD_DEPENDS:=USE_UCLIBC:argp-standalone USE_MUSL:argp-standalone
+PKG_LICENSE:=GPL-2.0
+
+include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/host-build.mk
+
+define Package/telnetd
+  SECTION:=utils
+  CATEGORY:=Base system
+  DEPENDS:=+libubus +libblobmsg-json +libubox +libmodbus +libmodbus +uci
+  TITLE:=witek libs
+endef
+
+define Package/Compile 
+	$(MAKE) -C $(PKG_BUILD_DIR) all
+endef
+define Package/telnetd/install
+	$(INSTALL_DIR) $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/telnetd $(1)/usr/bin/
+	$(INSTALL_DIR) $(1)/etc/init.d/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/telnetd-init $(1)/etc/init.d/telnetd
+endef
+
+$(eval $(call BuildPackage,telnetd))
